@@ -20,9 +20,9 @@ function QuestionCard(prop: QuestionCardInter) {
         <div className={styles.right}>
           {isPublished ? <span style={{ color: 'green' }}>已发布</span> : <span>未发布</span>}
           &nbsp;
-          <span>{createAt}</span>
-          &nbsp;
           <span>答卷：{answerCount}</span>
+          &nbsp;
+          <span>{createAt}</span>
         </div>
       </div>
       <div className={styles.button_container}>
