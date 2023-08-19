@@ -25,7 +25,7 @@ function QuestionCard(prop: QuestionCardInter) {
           <span>{createAt}</span>
         </div>
       </div>
-      <div className={styles.button_container}>
+      <div className={styles['button-container']}>
         <div className={styles.left}>
           <button type="button">编辑问卷</button>
           <button type="button">数据统计</button>
