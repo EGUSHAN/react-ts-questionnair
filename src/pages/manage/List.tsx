@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import QuestionCard from '../components/QuestionCard';
+// import { useSearchParams } from 'react-router-dom';
+import { useTitle } from 'ahooks';
+import QuestionCard from '../../components/QuestionCard';
 import styles from './List.module.scss';
-import { QuestionInter } from '../interface';
+import { QuestionInter } from '../../interface';
 
 const rawQuestionList: QuestionInter[] = [
   {
@@ -15,6 +17,10 @@ const rawQuestionList: QuestionInter[] = [
 ];
 
 function List() {
+  useTitle('列表');
+  // const [searchParams] = useSearchParams();
+  // console.log(searchParams.get('keyword'));
+
   const [questionList, setQuestionList] = useState<QuestionInter[]>(rawQuestionList);
 
   const deleteQuestion = (id: number) => {
