@@ -28,7 +28,7 @@
     "lint:prettier": "prettier -c --write \"src/**/*\"",
     "lint:style": "stylelint \"**/*.css\"",
     "lint:js:fix": "eslint --ext .js,.jsx,.ts,.tsx ./src --fix",
-    "lint:style:fix": "stylelint \"**/*.css\" --fix",
+    "lint:style:fix": "stylelint \"**/*.scss\" --fix",
     "lint-staged": "lint-staged",
     "prepare": "husky install"
   },
