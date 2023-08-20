@@ -14,9 +14,15 @@ import Trash from '../pages/manage/Trash';
 import NotFound from '../pages/NotFound';
 import List from '../pages/manage/List';
 
+export const HOME_PATHNAME = '/';
+export const LOGIN_PATHNAME = '/login';
+export const REGISTER_PATHNAME = '/register';
+
+export const MANAGE_INDEX_PATHNAME = '/manage/list';
+
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: HOME_PATHNAME,
     element: <MainLayout />,
     children: [
       {
@@ -24,11 +30,11 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: 'login',
+        path: LOGIN_PATHNAME,
         element: <Login />,
       },
       {
-        path: 'register',
+        path: REGISTER_PATHNAME,
         element: <Register />,
       },
       {
@@ -36,7 +42,7 @@ const router = createBrowserRouter([
         element: <ManageLayout />,
         children: [
           {
-            path: 'list',
+            path: MANAGE_INDEX_PATHNAME,
             element: <List />,
           },
           {

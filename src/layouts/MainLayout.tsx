@@ -1,15 +1,29 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import { Layout } from 'antd';
+import Logo from '../components/Logo';
+import UserInfo from '../components/UserInfo';
+
+import styles from './MainLayout.module.scss';
+
+const { Header, Footer, Content } = Layout;
 
 function MainLayout() {
   return (
-    <>
-      <div>MainLayout header</div>
-      <div>
+    <Layout>
+      <Header className={styles.header}>
+        <div className={styles.left}>
+          <Logo />
+        </div>
+        <div className={styles.right}>
+          <UserInfo />
+        </div>
+      </Header>
+      <Content className={styles.main}>
         <Outlet />
-      </div>
-      <div>MainLayout footer</div>
-    </>
+      </Content>
+      <Footer className={styles.footer}>问卷demo &copy; 2023-08-16</Footer>
+    </Layout>
   );
 }
 
