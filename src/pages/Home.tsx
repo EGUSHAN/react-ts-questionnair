@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Typography } from 'antd';
+import axios from 'axios';
 import { MANAGE_INDEX_PATHNAME } from '../router';
 import styles from './Home.module.scss';
 
@@ -8,6 +9,12 @@ const { Title, Paragraph } = Typography;
 
 function Home() {
   const nav = useNavigate();
+
+  useEffect(() => {
+    axios.get('/api/test').then((res) => {
+      console.log(res.data);
+    });
+  }, []);
 
   return (
     <div className={styles.container}>
