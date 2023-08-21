@@ -14,12 +14,12 @@ import styles from './QuestionCard.module.scss';
 
 const { confirm } = Modal;
 
-interface QuestionCardInter extends QuestionInter {
+interface QuestionCardInter extends Omit<QuestionInter, 'isDeleted'> {
   del: (id: number) => void;
 }
 
 function QuestionCard(prop: QuestionCardInter) {
-  const { id, title, createAt, answerCount, isPublished, isStar, del } = prop;
+  const { id, title, createdAt, answerCount, isPublished, isStar, del } = prop;
 
   const nav = useNavigate();
   const delHandle = () => {
@@ -49,7 +49,7 @@ function QuestionCard(prop: QuestionCardInter) {
           <Space>
             {isPublished ? <Tag color="processing">已发布</Tag> : <Tag>未发布</Tag>}
             <span>答卷：{answerCount}</span>
-            <span>{createAt}</span>
+            <span>{createdAt}</span>
           </Space>
         </div>
       </div>

@@ -1,38 +1,29 @@
 import React, { useState } from 'react';
 import { useTitle } from 'ahooks';
-import { Typography, Empty, Table, Space, Button, Tag, Modal } from 'antd';
+import { Typography, Empty, Table, Space, Button, Tag, Modal, Spin } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ListSearch from '../../components/ListSearch';
 import styles from './common.module.scss';
-import { QuestionInter } from '../../interface';
+import { QuestionType } from '../../interface';
+import useLoadQuestionListData from '../../hooks/useLoadQuestionListData';
 
 const { Title } = Typography;
 const { confirm } = Modal;
 
-const rawQuestionList: QuestionInter[] = [
-  {
-    id: 0,
-    title: '问卷1',
-    isPublished: true,
-    isStar: true,
-    answerCount: 5,
-    createAt: '4月15日 13:23',
-  },
-];
-
 function Trash() {
   useTitle('回收站');
 
-  const [questionList, setQuestionList] = useState<QuestionInter[]>(rawQuestionList);
+  const { loading, data } = useLoadQuestionListData({ isDeleted: true });
+  const { total = 0, list = [] } = data ?? {};
 
   const deleteQuestion = (id: number) => {
-    setQuestionList(questionList.filter((i) => i.id !== id));
+    console.log(list.filter((i) => i.id !== id));
   };
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const columns: ColumnsType<QuestionInter> = [
+  const columns: ColumnsType<QuestionType> = [
     {
       title: '标题',
       dataIndex: 'title',
@@ -52,15 +43,15 @@ function Trash() {
     },
     {
       title: '创建时间',
-      dataIndex: 'createAt',
-      key: 'createAt',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
     },
     {
       title: '操作',
       key: 'action',
       render: (_, record) => (
         <Space>
-          <Button disabled={selectedIds.length === 0}>恢复</Button>
+          <Button>恢复</Button>
           <Button type="text" size="small" onClick={() => deleteQuestion(record.id)}>
             删除
           </Button>
@@ -75,7 +66,7 @@ function Trash() {
       content: '删除以后无法找回',
       icon: <ExclamationCircleOutlined />,
       onOk: () => {
-        setQuestionList(questionList.filter((i) => !selectedIds.includes(i.id)));
+        console.log(list.filter((i) => !selectedIds.includes(i.id)));
         setSelectedIds([]);
       },
     });
@@ -92,17 +83,22 @@ function Trash() {
         </div>
       </div>
       <div className={styles.content}>
-        {questionList.length === 0 && <Empty description="暂无数据" />}
-        {questionList.length > 0 && (
+        {loading && (
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Spin />
+          </div>
+        )}
+        {!loading && total === 0 && <Empty description="暂无数据" />}
+        {!loading && total > 0 && (
           <>
             <Table
-              dataSource={questionList}
+              dataSource={list}
               columns={columns}
               pagination={false}
               rowKey={(q) => q.id}
               rowSelection={{
                 type: 'checkbox',
-                onChange: (selectedRowKeys: React.Key[], selectedRows: QuestionInter[]) => {
+                onChange: (selectedRowKeys: React.Key[], selectedRows: QuestionType[]) => {
                   setSelectedIds(selectedRows.map((i) => i.id));
                 },
               }}

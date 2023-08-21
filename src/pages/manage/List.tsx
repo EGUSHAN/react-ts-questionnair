@@ -1,39 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTitle } from 'ahooks';
-import { Typography } from 'antd';
+import { Spin, Typography } from 'antd';
 import QuestionCard from '../../components/QuestionCard';
 import styles from './common.module.scss';
-import { QuestionInter } from '../../interface';
 import ListSearch from '../../components/ListSearch';
+import useLoadQuestionListData from '../../hooks/useLoadQuestionListData';
 
 const { Title } = Typography;
-
-const rawQuestionList: QuestionInter[] = [
-  {
-    id: 0,
-    title: '问卷1',
-    isPublished: false,
-    isStar: false,
-    answerCount: 5,
-    createAt: '4月15日 13:23',
-  },
-  {
-    id: 1,
-    title: '问卷2',
-    isPublished: false,
-    isStar: true,
-    answerCount: 5,
-    createAt: '4月15日 13:23',
-  },
-];
 
 function List() {
   useTitle('列表');
 
-  const [questionList, setQuestionList] = useState<QuestionInter[]>(rawQuestionList);
+  const { loading, data } = useLoadQuestionListData();
+  const { list = [], total = 0 } = data ?? {};
 
   const deleteQuestion = (id: number) => {
-    setQuestionList(questionList.filter((i) => i.id !== id));
+    console.log(list?.filter((i) => i.id !== id));
   };
 
   return (
@@ -47,9 +29,15 @@ function List() {
         </div>
       </div>
       <div className={styles.content}>
-        {questionList.length > 0 &&
-          questionList.map((q) => {
-            const { id, title, isPublished, isStar, answerCount, createAt } = q;
+        {loading && (
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Spin />
+          </div>
+        )}
+        {!loading &&
+          total > 0 &&
+          list?.map((q) => {
+            const { id, title, isPublished, isStar, answerCount, createdAt } = q;
             return (
               <QuestionCard
                 key={q.id}
@@ -58,7 +46,7 @@ function List() {
                 isPublished={isPublished}
                 isStar={isStar}
                 answerCount={answerCount}
-                createAt={createAt}
+                createdAt={createdAt}
                 del={() => deleteQuestion(q.id)}
               />
             );
