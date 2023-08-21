@@ -6,3 +6,10 @@ export interface QuestionInter {
   answerCount: number;
   createAt: string;
 }
+
+export interface RegisterInter {
+  username: string;
+  password: string;
+  confirm: string;
+  nickName: string;
+}
