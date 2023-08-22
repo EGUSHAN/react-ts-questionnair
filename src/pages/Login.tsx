@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react';
 import { Form, Space, Typography, Input, Button, Checkbox } from 'antd';
 import { UserAddOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useRequest } from 'ahooks';
 import styles from './Login.module.scss';
-import { REGISTER_PATHNAME } from '../router';
+import { MANAGE_INDEX_PATHNAME, REGISTER_PATHNAME } from '../router';
 
 import { RegisterInter } from '../interface';
 
 import { USERNAME_KEY, PASSWORD_KEY } from '../constant';
+import { loginService } from '../services/user';
+import { setToken } from '../utils/user-token';
 
 const { Title } = Typography;
 
@@ -33,6 +36,21 @@ interface LoginInter extends Pick<RegisterInter, 'username' | 'password'> {
 }
 
 function Login() {
+  const nav = useNavigate();
+
+  const { run: login } = useRequest(
+    (value) => {
+      return loginService(value);
+    },
+    {
+      manual: true,
+      onSuccess(res) {
+        setToken(res.token);
+        nav(MANAGE_INDEX_PATHNAME);
+      },
+    },
+  );
+
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -50,6 +68,10 @@ function Login() {
     } else {
       deleteUserFromStorage();
     }
+    login({
+      username,
+      password,
+    });
   };
 
   return (

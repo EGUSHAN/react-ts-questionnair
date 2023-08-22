@@ -24,6 +24,14 @@ export interface ListInter<T> {
 
 export interface FilterInter {
   keyword: string;
-  isDeleted?: boolean;
-  isStar?: boolean;
+  isDeleted: boolean;
+  isStar: boolean;
+  page: number;
+  pageSize: number;
+}
+
+export interface UserInfoInter {
+  username: string;
+  password: string;
+  nickname?: string;
 }

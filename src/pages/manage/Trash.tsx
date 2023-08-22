@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useTitle } from 'ahooks';
-import { Typography, Empty, Table, Space, Button, Tag, Modal, Spin } from 'antd';
+import { useRequest, useTitle } from 'ahooks';
+import { Typography, Empty, Table, Space, Button, Tag, Modal, Spin, message } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ListSearch from '../../components/ListSearch';
 import styles from './common.module.scss';
 import { QuestionType } from '../../interface';
 import useLoadQuestionListData from '../../hooks/useLoadQuestionListData';
+import ListPage from '../../components/ListPage';
+import { deleteQuestionsService, updateQuestionService } from '../../services/question';
 
 const { Title } = Typography;
 const { confirm } = Modal;
@@ -14,12 +16,34 @@ const { confirm } = Modal;
 function Trash() {
   useTitle('回收站');
 
-  const { loading, data } = useLoadQuestionListData({ isDeleted: true });
+  const { loading, data, refresh } = useLoadQuestionListData({ isDeleted: true });
   const { total = 0, list = [] } = data ?? {};
 
-  const deleteQuestion = (id: number) => {
-    console.log(list.filter((i) => i.id !== id));
-  };
+  const { run: deleteQuestion } = useRequest(
+    (id) => {
+      return updateQuestionService(id, { isDeleted: true });
+    },
+    {
+      manual: true,
+      async onSuccess() {
+        refresh();
+        await message.success('删除成功');
+      },
+    },
+  );
+
+  const { run: recover } = useRequest(
+    (id) => {
+      return updateQuestionService(id, { isDeleted: false });
+    },
+    {
+      manual: true,
+      async onSuccess() {
+        refresh();
+        await message.success('恢复成功');
+      },
+    },
+  );
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
@@ -51,7 +75,7 @@ function Trash() {
       key: 'action',
       render: (_, record) => (
         <Space>
-          <Button>恢复</Button>
+          <Button onClick={() => recover(record.id)}>恢复</Button>
           <Button type="text" size="small" onClick={() => deleteQuestion(record.id)}>
             删除
           </Button>
@@ -60,14 +84,27 @@ function Trash() {
     },
   ];
 
+  const { run: batchDel } = useRequest(
+    () => {
+      return deleteQuestionsService(selectedIds);
+    },
+    {
+      manual: true,
+      onSuccess() {
+        setSelectedIds([]);
+        message.success('删除成功');
+        refresh();
+      },
+    },
+  );
+
   const batchDeleteQuestion = () => {
     confirm({
       title: '确定批量删除',
       content: '删除以后无法找回',
       icon: <ExclamationCircleOutlined />,
-      onOk: () => {
-        console.log(list.filter((i) => !selectedIds.includes(i.id)));
-        setSelectedIds([]);
+      onOk: async () => {
+        batchDel();
       },
     });
   };
@@ -113,7 +150,9 @@ function Trash() {
           </>
         )}
       </div>
-      <div className={styles.footer}>分页</div>
+      <div className={styles.footer}>
+        <ListPage total={total} />
+      </div>
     </>
   );
 }

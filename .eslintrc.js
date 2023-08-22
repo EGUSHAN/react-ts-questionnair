@@ -27,6 +27,7 @@ module.exports = {
   rules: {
     'react/react-in-jsx-scope': 'off', // React17后不需要在jsx中主动引入react
     'import/no-cycle': 'off',
+    'no-param-reassign': 'off',
     'prettier/prettier': [
       'error',
       {

@@ -1,22 +1,91 @@
-import React from 'react';
-import { useTitle } from 'ahooks';
-import { Spin, Typography } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useDebounceFn, useRequest, useTitle } from 'ahooks';
+import { Typography } from 'antd';
 import QuestionCard from '../../components/QuestionCard';
 import styles from './common.module.scss';
 import ListSearch from '../../components/ListSearch';
-import useLoadQuestionListData from '../../hooks/useLoadQuestionListData';
+import LoadMore from '../../components/LoadMore';
+import { QuestionInter } from '../../interface';
+import { getQuestionListService } from '../../services/question';
+import { LIST_PAGE_SIZE, LIST_SEARCH_PARAM_KEY } from '../../constant';
 
 const { Title } = Typography;
 
 function List() {
   useTitle('列表');
 
-  const { loading, data } = useLoadQuestionListData();
-  const { list = [], total = 0 } = data ?? {};
+  const [page, setPage] = useState(1);
+  const [list, setList] = useState<QuestionInter[]>([]);
+  const [total, setTotal] = useState(0);
+  const [started, setStarted] = useState(false);
 
-  const deleteQuestion = (id: number) => {
-    console.log(list?.filter((i) => i.id !== id));
+  const handleMore = total > list.length;
+
+  const [searchParams] = useSearchParams();
+
+  const keyword = searchParams.get(LIST_SEARCH_PARAM_KEY) || '';
+
+  useEffect(() => {
+    setStarted(false);
+    setPage(1);
+    setList([]);
+    setTotal(0);
+  }, [keyword]);
+
+  const load = () => {
+    return getQuestionListService({
+      page,
+      pageSize: LIST_PAGE_SIZE,
+      keyword,
+    });
   };
+
+  const { run: loadMore, loading } = useRequest(load, {
+    manual: true,
+    onSuccess(res) {
+      const { list: questionList = [], total: totalNum = 0 } = res;
+      setList([...list, ...questionList]);
+      setTotal(totalNum);
+      setPage(page + 1);
+      setStarted(false);
+    },
+  });
+
+  // 触发加载
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { run: tryLoadMore } = useDebounceFn(
+    () => {
+      const elem = containerRef.current;
+      if (elem === null) return;
+      const domRect = elem.getBoundingClientRect();
+      if (domRect === null) return;
+      const { bottom } = domRect;
+      if (bottom <= document.body.clientHeight) {
+        loadMore(); // 加载数据
+        setStarted(true);
+      }
+    },
+    {
+      wait: 1000,
+    },
+  );
+
+  // 当页面加载，或者URL 参数变化
+  useEffect(() => {
+    tryLoadMore();
+  }, [searchParams, tryLoadMore]);
+
+  useEffect(() => {
+    if (handleMore) {
+      window.addEventListener('scroll', tryLoadMore);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', tryLoadMore);
+    };
+  }, [handleMore, tryLoadMore, searchParams]);
 
   return (
     <>
@@ -29,15 +98,9 @@ function List() {
         </div>
       </div>
       <div className={styles.content}>
-        {loading && (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Spin />
-          </div>
-        )}
-        {!loading &&
-          total > 0 &&
+        {total > 0 &&
           list?.map((q) => {
-            const { id, title, isPublished, isStar, answerCount, createdAt } = q;
+            const { id, title, isPublished, isStar, answerCount, createdAt, isDeleted } = q;
             return (
               <QuestionCard
                 key={q.id}
@@ -47,12 +110,14 @@ function List() {
                 isStar={isStar}
                 answerCount={answerCount}
                 createdAt={createdAt}
-                del={() => deleteQuestion(q.id)}
+                isDeleted={isDeleted}
               />
             );
           })}
       </div>
-      <div className={styles.footer}>loadMore...上划加载更多</div>
+      <div ref={containerRef} className={styles.footer}>
+        <LoadMore loading={loading} total={total} haveMore={handleMore} started={started} />
+      </div>
     </>
   );
 }

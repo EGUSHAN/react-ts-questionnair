@@ -1,19 +1,41 @@
 import React from 'react';
 
-import { Typography, Space, Form, Input, Button } from 'antd';
+import { Typography, Space, Form, Input, Button, message } from 'antd';
 import { UserAddOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+import { useRequest } from 'ahooks';
 import styles from './Register.module.scss';
 import { LOGIN_PATHNAME } from '../router';
 
-import { RegisterInter } from '../interface';
+import { RegisterInter, UserInfoInter } from '../interface';
+import { registerService } from '../services/user';
 
 const { Title } = Typography;
 
 function Register() {
+  const nav = useNavigate();
+
+  const { run: register } = useRequest(
+    (value: UserInfoInter) => {
+      return registerService(value);
+    },
+    {
+      manual: true,
+      onSuccess() {
+        message.success('注册成功');
+        nav(LOGIN_PATHNAME);
+      },
+    },
+  );
+
   const onFinish = (values: RegisterInter) => {
-    console.log(values);
+    const { username, password, nickName } = values;
+    register({
+      password,
+      username,
+      nickname: nickName,
+    });
   };
 
   return (

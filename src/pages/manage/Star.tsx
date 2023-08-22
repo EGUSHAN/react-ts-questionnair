@@ -3,6 +3,7 @@ import { useTitle } from 'ahooks';
 import { Typography, Empty, Spin } from 'antd';
 import QuestionCard from '../../components/QuestionCard';
 import ListSearch from '../../components/ListSearch';
+import ListPage from '../../components/ListPage';
 import styles from './common.module.scss';
 import useLoadQuestionListData from '../../hooks/useLoadQuestionListData';
 
@@ -13,10 +14,6 @@ function Star() {
 
   const { loading, data } = useLoadQuestionListData({ isStar: true });
   const { list = [], total = 0 } = data ?? {};
-
-  const deleteQuestion = (id: number) => {
-    console.log(list.filter((i) => i.id !== id));
-  };
 
   return (
     <>
@@ -38,7 +35,7 @@ function Star() {
         {!loading &&
           total > 0 &&
           list.map((q) => {
-            const { id, title, isPublished, isStar, answerCount, createdAt } = q;
+            const { id, title, isPublished, isStar, answerCount, createdAt, isDeleted } = q;
             return (
               <QuestionCard
                 key={q.id}
@@ -48,12 +45,14 @@ function Star() {
                 isStar={isStar}
                 answerCount={answerCount}
                 createdAt={createdAt}
-                del={() => deleteQuestion(q.id)}
+                isDeleted={isDeleted}
               />
             );
           })}
       </div>
-      <div className={styles.footer}>分页</div>
+      <div className={styles.footer}>
+        <ListPage total={total} />
+      </div>
     </>
   );
 }

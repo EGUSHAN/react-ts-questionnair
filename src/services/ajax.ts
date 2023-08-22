@@ -1,10 +1,20 @@
 import axios from 'axios';
 import { message } from 'antd';
+import { getToken } from '../utils/user-token';
 
 const instance = axios.create({
   timeout: 10 * 1000,
 });
 
+instance.interceptors.request.use(
+  (config) => {
+    config.headers.Authorization = `Bearer ${getToken()}`;
+    return config;
+  },
+  async (err) => {
+    await Promise.reject(err);
+  },
+);
 // response 拦截：统一处理 errno 和 msg
 instance.interceptors.response.use(async (res) => {
   const resData = res?.data || {};
