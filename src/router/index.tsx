@@ -20,6 +20,14 @@ export const REGISTER_PATHNAME = '/register';
 
 export const MANAGE_INDEX_PATHNAME = '/manage/list';
 
+export function isLoginOrRegister(pathname: string) {
+  return [LOGIN_PATHNAME, REGISTER_PATHNAME].includes(pathname);
+}
+
+export function isNoNeedUserInfo(pathname: string) {
+  return [HOME_PATHNAME, LOGIN_PATHNAME, REGISTER_PATHNAME].includes(pathname);
+}
+
 const router = createBrowserRouter([
   {
     path: HOME_PATHNAME,

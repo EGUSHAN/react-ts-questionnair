@@ -5,8 +5,12 @@ import { Button, Space, Divider, message } from 'antd';
 import { useRequest } from 'ahooks';
 import styles from './ManageLayout.module.scss';
 import { createQuestionService } from '../services/question';
+import useLoadUserData from '../hooks/useLoadUserData';
+import useNavPage from '../hooks/useNavPage';
 
 function ManageLayout() {
+  const { waitingUserData } = useLoadUserData();
+  useNavPage(waitingUserData);
   const nav = useNavigate();
   const { pathname } = useLocation();
 
