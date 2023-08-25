@@ -18,7 +18,7 @@ const { confirm } = Modal;
 
 interface QuestionCardInter extends QuestionInter {}
 
-function QuestionCard(prop: QuestionCardInter) {
+function QuestionCard(prop: Omit<QuestionCardInter, 'componentList'>) {
   const { id, title, createdAt, answerCount, isPublished, isStar, isDeleted } = prop;
 
   const [isStarState, setIsStarState] = useState(isStar);

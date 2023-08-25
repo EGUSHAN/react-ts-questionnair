@@ -28,6 +28,11 @@ module.exports = {
     'react/react-in-jsx-scope': 'off', // React17后不需要在jsx中主动引入react
     'import/no-cycle': 'off',
     'no-param-reassign': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'jsx-a11y/interactive-supports-focus': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/jsx-no-bind': 'off',
     'prettier/prettier': [
       'error',
       {

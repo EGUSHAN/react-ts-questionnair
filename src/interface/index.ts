@@ -1,3 +1,5 @@
+import { ComponentInfoType } from '../store/componentsReducer';
+
 export interface QuestionInter {
   id: number;
   title: string;
@@ -6,6 +8,7 @@ export interface QuestionInter {
   answerCount: number;
   createdAt: string;
   isDeleted: boolean;
+  componentList: ComponentInfoType[];
 }
 
 export type QuestionType = Omit<QuestionInter, 'isDeleted'>;
