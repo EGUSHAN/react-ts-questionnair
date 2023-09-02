@@ -27,11 +27,18 @@ function ComponentProp() {
     return <NoProp />;
   }
 
-  const { type, props: attr } = selectedComponent;
+  const { type, props: attr, isLocked, isHidden } = selectedComponent;
   const ComponentConf = getComponentConfByType(type);
   if (ComponentConf === null) return <NoProp />;
   return (
-    (ComponentConf && <ComponentConf.PropComponent {...attr} onChange={changeProps} />) || null
+    (ComponentConf && (
+      <ComponentConf.PropComponent
+        {...attr}
+        disabled={isLocked || isHidden}
+        onChange={changeProps}
+      />
+    )) ||
+    null
   );
 }
 

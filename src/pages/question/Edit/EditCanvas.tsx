@@ -8,6 +8,8 @@ import { ComponentInfoType, changeSelectedId } from '../../../store/componentsRe
 
 import { getComponentConfByType } from '../../../components/QuestionComponents';
 
+import useBindCanvasBeyPress from '../../../hooks/useBindCanvasBeyPress';
+
 type PropsType = {
   loading: boolean;
 };
@@ -28,6 +30,8 @@ function EditCanvas(props: PropsType) {
     dispatch(changeSelectedId(id));
   }
 
+  useBindCanvasBeyPress();
+
   if (loading)
     return (
       <div
@@ -43,20 +47,24 @@ function EditCanvas(props: PropsType) {
     );
   return (
     <div className={styles.canvas}>
-      {componentList.map((c) => {
-        const { fe_id: id } = c;
-        const wrapperDefaultClassName = styles['component-wrapper'];
-        const selectedClassName = styles.selected;
-        const wrapperClassName = classNames({
-          [wrapperDefaultClassName]: true,
-          [selectedClassName]: id === selectedId,
-        });
-        return (
-          <div key={id} className={wrapperClassName} onClick={(e) => handleClick(e, id)}>
-            <div className={styles.component}>{genComponent(c)}</div>
-          </div>
-        );
-      })}
+      {componentList
+        .filter((c) => !c.isHidden)
+        .map((c) => {
+          const { fe_id: id, isLocked } = c;
+          const wrapperDefaultClassName = styles['component-wrapper'];
+          const selectedClassName = styles.selected;
+          const lockedClassName = styles.locked;
+          const wrapperClassName = classNames({
+            [wrapperDefaultClassName]: true,
+            [selectedClassName]: id === selectedId,
+            [lockedClassName]: isLocked,
+          });
+          return (
+            <div key={id} className={wrapperClassName} onClick={(e) => handleClick(e, id)}>
+              <div className={styles.component}>{genComponent(c)}</div>
+            </div>
+          );
+        })}
     </div>
   );
 }

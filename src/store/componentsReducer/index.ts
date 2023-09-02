@@ -1,21 +1,26 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
 import { ComponentPropsType } from '../../components/QuestionComponents';
+import { getNextSelectedId, insertNewComponent } from './utils';
 
 export type ComponentInfoType = {
   fe_id: string;
   type: string;
   title: string;
+  isHidden?: boolean;
+  isLocked?: boolean;
   props: ComponentPropsType;
 };
 
 export type ComponentsStateType = {
   selectedId: string;
   componentList: ComponentInfoType[];
+  copiedComponent: ComponentInfoType | null;
 };
 
 const INIT_STATE: ComponentsStateType = {
   selectedId: '',
   componentList: [],
+  copiedComponent: null,
 };
 export const componentsSlice = createSlice({
   name: 'components',
@@ -38,21 +43,7 @@ export const componentsSlice = createSlice({
       };
     },
     addComponent: (state: ComponentsStateType, action: PayloadAction<ComponentInfoType>) => {
-      let components = [...state.componentList];
-      if (state.selectedId) {
-        const index = state.componentList.findIndex((i) => i.fe_id === state.selectedId);
-        if (index !== -1) {
-          components.splice(index + 1, 0, action.payload);
-        } else {
-          components = [...components, action.payload];
-        }
-      } else {
-        components = [...components, action.payload];
-      }
-      return {
-        selectedId: action.payload.fe_id,
-        componentList: [...components],
-      };
+      return insertNewComponent(state, action.payload);
     },
     modifyComponent: (state: ComponentsStateType, action: PayloadAction<ComponentInfoType>) => {
       const { fe_id: id } = action.payload;
@@ -66,10 +57,118 @@ export const componentsSlice = createSlice({
         componentList,
       };
     },
+    removeSelectedComponent(state: ComponentsStateType) {
+      const { selectedId, componentList } = state;
+      const newComponentList = state.componentList.filter((i) => i.fe_id !== selectedId);
+      const newSelectedId = getNextSelectedId(selectedId, componentList);
+      return {
+        ...state,
+        selectedId: newSelectedId,
+        componentList: newComponentList,
+      };
+    },
+    changeComponentHidden(
+      state: ComponentsStateType,
+      action: PayloadAction<{ fe_id: string; isHidden: boolean }>,
+    ) {
+      const { selectedId, componentList } = state;
+      const newComponentList = componentList.map((i) => {
+        let hidden = i.isHidden ?? false;
+        if (i.fe_id === action.payload.fe_id) {
+          hidden = action.payload.isHidden;
+        }
+        return {
+          ...i,
+          isHidden: hidden,
+        };
+      });
+      let newSelectedId = selectedId;
+      if (!action.payload.isHidden) {
+        newSelectedId = action.payload.fe_id;
+      } else {
+        getNextSelectedId(action.payload.fe_id, componentList);
+      }
+      return {
+        ...state,
+        selectedId: newSelectedId,
+        componentList: newComponentList,
+      };
+    },
+
+    toggleComponentLocked(state: ComponentsStateType, action: PayloadAction<{ fe_id: string }>) {
+      const { componentList } = state;
+      const { fe_id: id } = action.payload;
+      const newComponentList = componentList.map((i) => {
+        return {
+          ...i,
+          isLocked: i.fe_id === id ? !i.isLocked : i.isLocked,
+        };
+      });
+
+      return {
+        ...state,
+        componentList: newComponentList,
+      };
+    },
+
+    copySelectedComponent(state: ComponentsStateType, action: PayloadAction<{ fe_id: string }>) {
+      const { componentList } = state;
+      const { fe_id: id } = action.payload;
+      const curComponent = componentList.find((i) => i.fe_id === id);
+      return {
+        ...state,
+        copiedComponent: curComponent || null,
+      };
+    },
+
+    pasteCopiedComponent(state: ComponentsStateType) {
+      const { copiedComponent } = state;
+      if (copiedComponent === null) {
+        return {
+          ...state,
+        };
+      }
+      const component = {
+        ...copiedComponent,
+        fe_id: nanoid(),
+      };
+      return insertNewComponent(state, component);
+    },
+
+    selectPrevComponent(state: ComponentsStateType) {
+      const { selectedId, componentList } = state;
+      const selectedIndex = componentList.findIndex((c) => c.fe_id === selectedId);
+      if (selectedIndex <= 0) return { ...state };
+      return {
+        ...state,
+        selectedId: componentList[selectedIndex - 1].fe_id,
+      };
+    },
+    selectNextComponent(state: ComponentsStateType) {
+      const { selectedId, componentList } = state;
+      const selectedIndex = componentList.findIndex((c) => c.fe_id === selectedId);
+      if (selectedIndex < 0) return { ...state };
+      if (selectedIndex + 1 === componentList.length) return { ...state };
+      return {
+        ...state,
+        selectedId: componentList[selectedIndex + 1].fe_id,
+      };
+    },
   },
 });
 
-export const { resetComponents, changeSelectedId, addComponent, modifyComponent } =
-  componentsSlice.actions;
+export const {
+  resetComponents,
+  changeSelectedId,
+  addComponent,
+  modifyComponent,
+  removeSelectedComponent,
+  changeComponentHidden,
+  toggleComponentLocked,
+  copySelectedComponent,
+  pasteCopiedComponent,
+  selectPrevComponent,
+  selectNextComponent,
+} = componentsSlice.actions;
 
 export default componentsSlice.reducer;
