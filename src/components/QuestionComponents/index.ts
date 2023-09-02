@@ -3,10 +3,14 @@ import type { FC } from 'react';
 import QuestionInputConf, { QuestionInputPropsType } from './QuestionInput';
 import QuestionTitleConf, { QuestionTitlePropsType } from './QuestionTitle';
 import QuestionParagraphConf, { QuestionParagraphPropsType } from './QuestionParagraph';
+import QuestionInfoConf, { QuestionInfoPropsType } from './QuestionInfo';
+import QuestionTextAreaConf, { QuestionTextAreaPropsType } from './QuestionTextArea';
 
 export type ComponentPropsType = QuestionTitlePropsType &
   QuestionInputPropsType &
-  QuestionParagraphPropsType;
+  QuestionParagraphPropsType &
+  QuestionInfoPropsType &
+  QuestionTextAreaPropsType;
 // 统一，组件配置
 export type ComponentConfType = {
   title: string;
@@ -21,18 +25,20 @@ const componentConfList: ComponentConfType[] = [
   QuestionInputConf,
   QuestionTitleConf,
   QuestionParagraphConf,
+  QuestionInfoConf,
+  QuestionTextAreaConf,
 ];
 
 export const componentConfGroup = [
   {
     groupId: 'textGroup',
     groupName: '文本显示',
-    components: [QuestionTitleConf, QuestionParagraphConf],
+    components: [QuestionTitleConf, QuestionParagraphConf, QuestionInfoConf],
   },
   {
     groupId: 'inputGroup',
     groupName: '用户输入',
-    components: [QuestionInputConf],
+    components: [QuestionInputConf, QuestionTextAreaConf],
   },
 ];
 
