@@ -5,12 +5,16 @@ import QuestionTitleConf, { QuestionTitlePropsType } from './QuestionTitle';
 import QuestionParagraphConf, { QuestionParagraphPropsType } from './QuestionParagraph';
 import QuestionInfoConf, { QuestionInfoPropsType } from './QuestionInfo';
 import QuestionTextAreaConf, { QuestionTextAreaPropsType } from './QuestionTextArea';
+import QuestionRadioConf, { QuestionRadioPropsType } from './QuestionRadio';
+import QuestionCheckboxConf, { QuestionCheckboxPropsType } from './QuestionCheckbox';
 
 export type ComponentPropsType = QuestionTitlePropsType &
   QuestionInputPropsType &
   QuestionParagraphPropsType &
   QuestionInfoPropsType &
-  QuestionTextAreaPropsType;
+  QuestionTextAreaPropsType &
+  QuestionRadioPropsType &
+  QuestionCheckboxPropsType;
 // 统一，组件配置
 export type ComponentConfType = {
   title: string;
@@ -27,6 +31,8 @@ const componentConfList: ComponentConfType[] = [
   QuestionParagraphConf,
   QuestionInfoConf,
   QuestionTextAreaConf,
+  QuestionRadioConf,
+  QuestionCheckboxConf,
 ];
 
 export const componentConfGroup = [
@@ -39,6 +45,11 @@ export const componentConfGroup = [
     groupId: 'inputGroup',
     groupName: '用户输入',
     components: [QuestionInputConf, QuestionTextAreaConf],
+  },
+  {
+    groupId: 'choiceGroup',
+    groupName: '用户选择',
+    components: [QuestionRadioConf, QuestionCheckboxConf],
   },
 ];
 
