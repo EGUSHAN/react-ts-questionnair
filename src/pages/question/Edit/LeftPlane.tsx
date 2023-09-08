@@ -4,6 +4,7 @@ import { Tabs } from 'antd';
 import { AppstoreAddOutlined, BarsOutlined } from '@ant-design/icons';
 
 import ComponentLib from './ComponentLib';
+import Layers from './Layers';
 
 function LeftPlane() {
   const tabsItems = [
@@ -25,7 +26,7 @@ function LeftPlane() {
           图层
         </span>
       ),
-      children: <div>图层</div>,
+      children: <Layers />,
     },
   ];
 

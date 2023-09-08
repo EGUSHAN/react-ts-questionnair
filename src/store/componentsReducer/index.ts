@@ -71,7 +71,7 @@ export const componentsSlice = createSlice({
       state: ComponentsStateType,
       action: PayloadAction<{ fe_id: string; isHidden: boolean }>,
     ) {
-      const { selectedId, componentList } = state;
+      const { componentList } = state;
       const newComponentList = componentList.map((i) => {
         let hidden = i.isHidden ?? false;
         if (i.fe_id === action.payload.fe_id) {
@@ -82,11 +82,11 @@ export const componentsSlice = createSlice({
           isHidden: hidden,
         };
       });
-      let newSelectedId = selectedId;
+      let newSelectedId = '';
       if (!action.payload.isHidden) {
         newSelectedId = action.payload.fe_id;
       } else {
-        getNextSelectedId(action.payload.fe_id, componentList);
+        newSelectedId = getNextSelectedId(action.payload.fe_id, componentList);
       }
       return {
         ...state,
@@ -107,6 +107,7 @@ export const componentsSlice = createSlice({
 
       return {
         ...state,
+        selectedId: id,
         componentList: newComponentList,
       };
     },
@@ -117,7 +118,7 @@ export const componentsSlice = createSlice({
       const curComponent = componentList.find((i) => i.fe_id === id);
       return {
         ...state,
-        copiedComponent: curComponent || null,
+        copiedComponent: curComponent ?? null,
       };
     },
 
@@ -154,6 +155,25 @@ export const componentsSlice = createSlice({
         selectedId: componentList[selectedIndex + 1].fe_id,
       };
     },
+    changeComponentTitle(
+      state: ComponentsStateType,
+      action: PayloadAction<{
+        fe_id: string;
+        title: string;
+      }>,
+    ) {
+      const { fe_id: id, title } = action.payload;
+      const newComponents = state.componentList.map((c) => {
+        return {
+          ...c,
+          title: c.fe_id === id ? title : c.title,
+        };
+      });
+      return {
+        ...state,
+        componentList: newComponents,
+      };
+    },
   },
 });
 
@@ -169,6 +189,7 @@ export const {
   pasteCopiedComponent,
   selectPrevComponent,
   selectNextComponent,
+  changeComponentTitle,
 } = componentsSlice.actions;
 
 export default componentsSlice.reducer;
