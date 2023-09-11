@@ -6,12 +6,14 @@ import {
   removeSelectedComponent,
   selectNextComponent,
   selectPrevComponent,
-} from '../store/componentsReducer';
+} from '@/store/componentsReducer';
 import useGetComponentInfo from './useGetComponentInfo';
 
 function isActiveElementValid() {
   const activeElem = document.activeElement;
   if (activeElem === document.body) return true;
+
+  if (activeElem?.matches('div[role="button"]')) return true;
   return false;
 }
 

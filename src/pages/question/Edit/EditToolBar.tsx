@@ -8,8 +8,10 @@ import {
   BlockOutlined,
   CopyOutlined,
   DeleteOutlined,
+  DownOutlined,
   EyeInvisibleOutlined,
   LockOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import {
   changeComponentHidden,
@@ -17,13 +19,19 @@ import {
   toggleComponentLocked,
   copySelectedComponent,
   pasteCopiedComponent,
-} from '../../../store/componentsReducer';
-import useGetComponentInfo from '../../../hooks/useGetComponentInfo';
+  moveComponent,
+} from '@/store/componentsReducer';
+import useGetComponentInfo from '@/hooks/useGetComponentInfo';
 
 function EditToolBar() {
   const dispatch = useDispatch();
-  const { selectedId, selectedComponent, copiedComponent } = useGetComponentInfo();
-  const { isLocked = false } = selectedComponent || {};
+  const { selectedId, selectedComponent, copiedComponent, componentList } = useGetComponentInfo();
+  const { isLocked = false } = selectedComponent ?? {};
+
+  const { length } = componentList;
+  const selectedIndex = componentList.findIndex((i) => i.fe_id === selectedId);
+  const isFirst = selectedIndex <= 0;
+  const isLast = selectedIndex + 1 >= length;
 
   function handleDelete() {
     dispatch(removeSelectedComponent());
@@ -43,6 +51,26 @@ function EditToolBar() {
 
   function paste() {
     dispatch(pasteCopiedComponent());
+  }
+
+  function up() {
+    if (isFirst) return;
+    dispatch(
+      moveComponent({
+        oldIndex: selectedIndex,
+        newIndex: selectedIndex - 1,
+      }),
+    );
+  }
+
+  function down() {
+    if (isLast) return;
+    dispatch(
+      moveComponent({
+        oldIndex: selectedIndex,
+        newIndex: selectedIndex + 1,
+      }),
+    );
   }
 
   return (
@@ -71,6 +99,12 @@ function EditToolBar() {
           onClick={paste}
           disabled={copiedComponent === null}
         />
+      </Tooltip>
+      <Tooltip title="上移">
+        <Button shape="circle" icon={<UpOutlined />} onClick={up} disabled={isFirst} />
+      </Tooltip>
+      <Tooltip title="下移">
+        <Button shape="circle" icon={<DownOutlined />} onClick={down} disabled={isLast} />
       </Tooltip>
     </Space>
   );

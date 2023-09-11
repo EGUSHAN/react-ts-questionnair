@@ -1,5 +1,6 @@
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
-import { ComponentPropsType } from '../../components/QuestionComponents';
+import { arrayMove } from '@dnd-kit/sortable';
+import { ComponentPropsType } from '@/components/QuestionComponents';
 import { getNextSelectedId, insertNewComponent } from './utils';
 
 export type ComponentInfoType = {
@@ -174,6 +175,20 @@ export const componentsSlice = createSlice({
         componentList: newComponents,
       };
     },
+    moveComponent(
+      state: ComponentsStateType,
+      action: PayloadAction<{ oldIndex: number; newIndex: number }>,
+    ) {
+      const { componentList: curComponentList } = state;
+      const { oldIndex, newIndex } = action.payload;
+
+      const componentList = arrayMove(curComponentList, oldIndex, newIndex);
+
+      return {
+        ...state,
+        componentList,
+      };
+    },
   },
 });
 
@@ -190,6 +205,7 @@ export const {
   selectPrevComponent,
   selectNextComponent,
   changeComponentTitle,
+  moveComponent,
 } = componentsSlice.actions;
 
 export default componentsSlice.reducer;

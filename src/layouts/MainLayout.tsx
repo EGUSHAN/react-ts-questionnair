@@ -29,7 +29,14 @@ function MainLayout() {
         {!waitingUserData ? (
           <Outlet />
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', marginTop: '60px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginTop: '60px',
+              justifyContent: 'center',
+            }}
+          >
             <Spin />
           </div>
         )}

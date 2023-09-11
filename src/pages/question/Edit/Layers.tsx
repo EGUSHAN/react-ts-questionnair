@@ -3,14 +3,18 @@ import { useDispatch } from 'react-redux';
 import { message, Input, Button, Space } from 'antd';
 import { EyeInvisibleOutlined, LockOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
-import useGetComponentInfo from '../../../hooks/useGetComponentInfo';
+import useGetComponentInfo from '@/hooks/useGetComponentInfo';
+
+import SortableContainer from '@/components/DragSortable/SortableContainer';
+import SortableItem from '@/components/DragSortable/SortableItem';
 
 import {
   changeComponentHidden,
   changeComponentTitle,
   changeSelectedId,
+  moveComponent,
   toggleComponentLocked,
-} from '../../../store/componentsReducer';
+} from '@/store/componentsReducer';
 import styles from './Layers.module.scss';
 
 function Layers() {
@@ -64,8 +68,19 @@ function Layers() {
     );
   }
 
+  const componentListWithId = componentList.map((i) => ({ ...i, id: i.fe_id }));
+
+  function onDragEnd(oldIndex: number, newIndex: number) {
+    dispatch(
+      moveComponent({
+        newIndex,
+        oldIndex,
+      }),
+    );
+  }
+
   return (
-    <>
+    <SortableContainer items={componentListWithId} onDragEnd={onDragEnd}>
       {componentList.map((c) => {
         const { fe_id: id, title, isHidden = false, isLocked = false } = c;
 
@@ -78,43 +93,45 @@ function Layers() {
         });
 
         return (
-          <div key={id} className={styles.wrapper}>
-            <div className={titleClassName} onClick={() => handleTitleClick(id)}>
-              {changeTitleId === id ? (
-                <Input
-                  value={title}
-                  onPressEnter={() => setChangeTitleId('')}
-                  onBlur={() => setChangeTitleId('')}
-                  onChange={modifyTitle}
-                />
-              ) : (
-                title
-              )}
+          <SortableItem id={id} key={id}>
+            <div className={styles.wrapper}>
+              <div className={titleClassName} onClick={() => handleTitleClick(id)}>
+                {changeTitleId === id ? (
+                  <Input
+                    value={title}
+                    onPressEnter={() => setChangeTitleId('')}
+                    onBlur={() => setChangeTitleId('')}
+                    onChange={modifyTitle}
+                  />
+                ) : (
+                  title
+                )}
+              </div>
+              <div className={styles.handler}>
+                <Space>
+                  <Button
+                    size="small"
+                    shape="circle"
+                    className={!isHidden ? styles.btn : ''}
+                    icon={<EyeInvisibleOutlined />}
+                    type={isHidden ? 'primary' : 'text'}
+                    onClick={() => changeHidden(id, !isHidden)}
+                  />
+                  <Button
+                    size="small"
+                    shape="circle"
+                    className={!isLocked ? styles.btn : ''}
+                    icon={<LockOutlined />}
+                    type={isLocked ? 'primary' : 'text'}
+                    onClick={() => changeLock(id)}
+                  />
+                </Space>
+              </div>
             </div>
-            <div className={styles.handler}>
-              <Space>
-                <Button
-                  size="small"
-                  shape="circle"
-                  className={!isHidden ? styles.btn : ''}
-                  icon={<EyeInvisibleOutlined />}
-                  type={isHidden ? 'primary' : 'text'}
-                  onClick={() => changeHidden(id, !isHidden)}
-                />
-                <Button
-                  size="small"
-                  shape="circle"
-                  className={!isLocked ? styles.btn : ''}
-                  icon={<LockOutlined />}
-                  type={isLocked ? 'primary' : 'text'}
-                  onClick={() => changeLock(id)}
-                />
-              </Space>
-            </div>
-          </div>
+          </SortableItem>
         );
       })}
-    </>
+    </SortableContainer>
   );
 }
 
