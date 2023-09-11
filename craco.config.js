@@ -1,5 +1,11 @@
+const path = require('path');
 module.exports = {
   port: 3000,
+  webpack: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
   devServer: {
     proxy: {
       '/api': {
