@@ -13,8 +13,7 @@ function isActiveElementValid() {
   const activeElem = document.activeElement;
   if (activeElem === document.body) return true;
 
-  if (activeElem?.matches('div[role="button"]')) return true;
-  return false;
+  return !!activeElem?.matches('div[role="button"]');
 }
 
 function useBindCanvasBeyPress() {
