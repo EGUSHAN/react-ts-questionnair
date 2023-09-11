@@ -9,11 +9,10 @@ import styles from './EditHeader.module.scss';
 
 import EditToolBar from './EditToolBar';
 
-// eslint-disable-next-line import/extensions
 import useGetPageInfo from '@/hooks/useGetPageInfo';
-import { resetPageInfo } from '../../../store/pageInfoReducer';
-import useGetComponentInfo from '../../../hooks/useGetComponentInfo';
-import { updateQuestionService } from '../../../services/question';
+import { resetPageInfo } from '@/store/pageInfoReducer';
+import useGetComponentInfo from '@/hooks/useGetComponentInfo';
+import { updateQuestionService } from '@/services/question';
 
 const { Title } = Typography;
 
