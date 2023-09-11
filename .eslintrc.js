@@ -33,6 +33,7 @@ module.exports = {
     'jsx-a11y/no-static-element-interactions': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-no-bind': 'off',
+    'import/extensions': 'off',
     'prettier/prettier': [
       'error',
       {

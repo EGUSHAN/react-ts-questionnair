@@ -8,6 +8,9 @@ export interface QuestionInter {
   answerCount: number;
   createdAt: string;
   isDeleted: boolean;
+  desc?: string;
+  js?: string;
+  css?: string;
   componentList: ComponentInfoType[];
 }
 
