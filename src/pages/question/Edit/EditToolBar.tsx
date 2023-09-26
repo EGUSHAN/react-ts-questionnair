@@ -11,8 +11,11 @@ import {
   DownOutlined,
   EyeInvisibleOutlined,
   LockOutlined,
+  RedoOutlined,
+  UndoOutlined,
   UpOutlined,
 } from '@ant-design/icons';
+import { ActionCreators } from 'redux-undo';
 import {
   changeComponentHidden,
   removeSelectedComponent,
@@ -73,6 +76,14 @@ function EditToolBar() {
     );
   }
 
+  function undo() {
+    dispatch(ActionCreators.undo());
+  }
+
+  function redo() {
+    dispatch(ActionCreators.redo());
+  }
+
   return (
     <Space>
       <Tooltip title="删除">
@@ -105,6 +116,12 @@ function EditToolBar() {
       </Tooltip>
       <Tooltip title="下移">
         <Button shape="circle" icon={<DownOutlined />} onClick={down} disabled={isLast} />
+      </Tooltip>
+      <Tooltip title="撤销">
+        <Button shape="circle" icon={<UndoOutlined />} onClick={undo} />
+      </Tooltip>
+      <Tooltip title="重做">
+        <Button shape="circle" icon={<RedoOutlined />} onClick={redo} />
       </Tooltip>
     </Space>
   );
