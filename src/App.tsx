@@ -1,12 +1,11 @@
 import React from 'react';
-import './App.css';
+import { RouterProvider } from 'react-router-dom';
+import router from '@/router';
+
+import 'antd/dist/reset.css';
 
 function App() {
-  return (
-    <div className="App">
-      <h1>开心就好</h1>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
