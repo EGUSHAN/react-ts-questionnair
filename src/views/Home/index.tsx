@@ -1,8 +1,17 @@
 import React from 'react';
 import { Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
-  return <Button>nihao</Button>;
+  const nav = useNavigate();
+
+  const goLogin = () => {
+    nav({
+      pathname: '/test',
+    });
+  };
+
+  return <Button onClick={goLogin}>nihao</Button>;
 }
 
 export default Home;
