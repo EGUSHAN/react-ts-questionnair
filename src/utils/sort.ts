@@ -24,9 +24,11 @@ function parallel<T>(...args: T[][]): T[][] {
  * [{age: 12, name: 'Tom'}].sort(sorter(person => [person.age, person.name], ['asc', 'desc']))
  * ```
  */
+type OrderType = 'desc' | 'asc';
+
 export default function sorter<T>(
   calKey: (a: T) => (number | string)[],
-  order: string | string[] = 'asc',
+  order: OrderType | OrderType[] = 'asc',
 ) {
   return (a: T, b: T) => {
     const akeys = calKey(a);

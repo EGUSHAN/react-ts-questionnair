@@ -6,8 +6,8 @@ import 'antd/dist/reset.css';
 import sorter from '@/utils/sort';
 
 function App() {
-  const arr: { value: number }[] = [{ value: 1 }, { value: 5 }];
-  console.log(arr.sort(sorter<{ value: number }>((item) => [item.value], ['desc'])));
+  const arr: { value: number }[] = [{ value: 1 }, { value: 3 }, { value: 5 }];
+  console.log(arr.sort(sorter<{ value: number }>((item) => [item.value], ['asc'])));
   return <RouterProvider router={router} />;
 }
 
